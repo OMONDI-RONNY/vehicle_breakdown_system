@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $insertStmt = $conn->prepare($insertSql);
-    $insertStmt->bind_param("ssssssssssss", $id, $vehicleRegistration, $issueDescription, $countyName, $subCountyName, $email, $contactAddress, $requestDate, $requestTime, $firstname, $phone, $vehicleModel);
+    $insertStmt->bind_param("ssssssssssss", $vehicleID, $vehicleRegistration, $issueDescription, $countyName, $subCountyName, $email, $contactAddress, $requestDate, $requestTime, $firstname, $phone, $vehicleModel);
 
     if ($insertStmt->execute()) {
         header("Location: index.php");
@@ -134,45 +134,44 @@ mysqli_free_result($servicesResult);
     <!-- Custom CSS -->
     <link href="css/style.min.css" rel="stylesheet">
       <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+         table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
 
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
+    th {
+        background-color: #3498db; /* Change this color to your desired smart color */
+        color: #fff; /* Text color for better visibility */
+        position: relative;
+        cursor: pointer;
+    }
 
-        th {
-            background-color: #f2f2f2;
-        }
-        th.sortable {
-    cursor: pointer;
-    position: relative;
-}
+   
 
-th.sortable:after {
-    content: '\25B2'; /* Unicode for up arrow */
-    position: absolute;
-    right: 8px;
-    opacity: 0.5;
-}
+    tbody tr:hover {
+        background-color: #f5f5f5; /* Light gray background on hover */
+    }
 
-th.sorted-asc:after {
-    content: '\25B2'; /* Unicode for up arrow */
-    opacity: 1;
-}
+    .print-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 
-th.sorted-desc:after {
-    content: '\25BC'; /* Unicode for down arrow */
-    opacity: 1;
-}
+    .print-btn:hover {
+        background-color: #45a049;
+    }
+
 
     </style>
 </head>
@@ -207,7 +206,7 @@ th.sorted-desc:after {
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
                            <!-- <img src="../assets/images/logo-light-icon.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color: white;">ronny</p>
+                           <p id="demo" style="color: white;">V.B.S</p>
 
                         </b>
                         <!--End Logo icon -->
@@ -301,16 +300,21 @@ th.sorted-desc:after {
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notifications</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notifications</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
+
                         </li>
                          <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi mdi-help-circle me-2"></i><span
                                     class="hide-menu">FAQs</span></a>
                         </li>
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                href="bot.html" aria-expanded="false"><i
+                                    class="mdi mdi-comment me-2"></i><span class="hide-menu">Chats Us</span></a>
+                                </li>
                        
                     </ul>
 
@@ -363,7 +367,7 @@ th.sorted-desc:after {
                     </div>
                     <div class="col-md-6 col-4 align-self-center">
                         <div class="text-end upgrade-btn">
-                           ronny
+                           <a href="logout.php">LOGOUT</a>
                         </div>
                     </div>
                 </div>
@@ -398,6 +402,7 @@ th.sorted-desc:after {
             <?php
             // Include the database connection
            // include 'includes/connection.php';
+            
 
             // Fetch data from the database
             $sql = "SELECT id,user_id, vehicle_model, vehicle_registration, issue_desc, mechanic_assigned, service_cost, req_date, req_time FROM request where contact_email='$email'";
@@ -436,8 +441,8 @@ th.sorted-desc:after {
                     <!-- Form fields go here -->
 
                     <div class="form-group">
-                       <!-- <label for="vehicle_registration" class="form-label">Vehicle Registration Number:</label>-->
-                        <input type="hidden" class="form-control" value="<?php echo $vehicleID;?>" id="vehicle_registration" name="vehicle_registration" required>
+                       <label for="vehicle_registration" class="form-label">Vehicle Registration Number:</label>
+                        <input type="text" class="form-control" placeholder="KAT 226T"  id="vehicle_registration" name="vehicle_registration" required>
                     </div>
 
                    <div class="form-group">
@@ -585,7 +590,7 @@ th.sorted-desc:after {
         // Add more fields as needed
 
         // Set the content of the new window
-       // printWindow.document.write(printableContent);
+       printWindow.document.write(printableContent);
 
         // Close the document to ensure proper rendering
         printWindow.document.close();
@@ -616,6 +621,22 @@ th.sorted-desc:after {
         });
     });
 </script>
+ <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
+    </script>
 
 
 

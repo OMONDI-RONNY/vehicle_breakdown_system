@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //echo $lname;
 
     // Insert data into the database
-    $sql = "INSERT INTO mechanicreg (firstname, lastname,id,phone,mech_email,typeofservice,password) VALUES ('$fname', '$lname','$id','$phone','$email','$model','$hash')";
+    $sql = "INSERT INTO mechanicreg (firstname, lastname,mech_id,phone,mech_email,typeofservice,password) VALUES ('$fname', '$lname','$id','$phone','$email','$model','$hash')";
 
     if ($conn->query($sql) === TRUE) {
          header("Location: mechlog.php");

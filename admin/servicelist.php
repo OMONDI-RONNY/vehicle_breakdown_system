@@ -49,6 +49,14 @@ $users= $row1['count_records'];
 $feedback= $row2['count_records'];
 $requests= $row3['count_records'];
 
+$sql_select = "SELECT * FROM admin WHERE id=$id";
+$result7=mysqli_query($conn,$sql_select);
+$row7=mysqli_fetch_assoc($result7);
+$name7=$row7['firstname'];
+$name8=$row7['lastname'];
+$result_select = $conn->query($sql_select);
+$row = $result_select->fetch_assoc();
+
 
 $results_per_page = 5; // Number of items per page
 
@@ -417,10 +425,14 @@ $result = $conn->query($sql);
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <?php if ($row['photo'] !== '') { ?>
+                        <img style="border-radius:50%;" src="<?php echo $row['photo']; ?>" alt="Profile Image" class="profile-img">
+                    <?php } else { ?>
+                        <p><img style="border-radius: 50%;" src="dist/img/avatar.png"></p>
+                    <?php } ?>
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?php echo strtoupper($id); ?></a>
+          <a href="#" class="d-block"><?php echo strtoupper($name7.' '.$name8); ?></a>
         </div>
       </div>
 
@@ -750,7 +762,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date = $_POST['date']; // Note: In a real scenario, handle password hashing for security
 
     // Prepare and execute SQL query to insert user data into the database
-    $sql = "INSERT INTO categories (category, status, date_created) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO services (service_name, description, date_added) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sss", $category, $status, $date); // Assuming 'password' is stored as plaintext (not recommended)
     
@@ -818,11 +830,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (hour<6) {
       greeting = "Good Morning";
     }else if (hour<12) {
-      greeting = "Good Afternoon";
-    }else if (hour<18) {
-      greeting = "Good Evening";
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
     }else{
-      greeting = "Good Night";
+      greeting = "Good Evening!";
     }
     document.getElementById("demo").innerHTML = greeting;
 

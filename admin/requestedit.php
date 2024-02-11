@@ -1,58 +1,3 @@
-<?php
-session_start();
-include '../includes/connection.php';
-
-if (!isset($_SESSION['id'])) {
-    header("Location: adminlogin.php");
-    exit();
-}
-
-$error = '';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $id = $_POST['owner'];
-    $service = $_POST['services'];
-    $phone = $_POST['phone'];
-    $email = $_POST['email'];
-    $model = $_POST['vmodel'];
-    $rtype = $_POST['rtype'];
-    $vreg = $_POST['vreg'];
-   // $vname = $_POST['vname'];
-   // $vehicle_type = $_POST['vehicle_type'];
-    $address = $_POST['address'];
-    //$password = $_POST['password'];
-   // $confirmPassword = $_POST['confirmPassword'];
-
-  /**  if ($password !== $confirmPassword) {
-        $error = "Passwords do not match!";
-    } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);**/
-
-        $sql = "UPDATE request SET  contact_name=?, contact_phone=?, contact_email=?, contact _address=?,vehicle_registration=?, vehicle_model=?, issue_desc=? ,req_status=? WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssi", $name, $phone,$email, $address,$vreg, $model, $service, $rtype,$id);
-        $result = $stmt->execute();
-
-        if ($result) {
-            header("Location: request.php");
-            exit();
-        } else {
-            $error = "Error updating record: " . $conn->error;
-        }
-    
-}
-
-$id = $_GET['id'];
-$sql_select = "SELECT * FROM request WHERE id=?";
-$stmt_select = $conn->prepare($sql_select);
-$stmt_select->bind_param("i", $id);
-$stmt_select->execute();
-$result_select = $stmt_select->get_result();
-$row = $result_select->fetch_assoc();
-
-$conn->close();
-?>
 
 
 
@@ -61,133 +6,217 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assign a mechanic</title>
+    <title>Mechanic Details Form</title>
     <style>
-        /* Your CSS styles */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .container:hover {
-            transform: scale(1.02);
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2 {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 20px;
+            margin: 0;
+            font-size: 28px;
             text-align: center;
-            color: #333;
+            border-radius: 10px 10px 0 0;
+            width: 100%;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .column {
+            flex: 1;
+            box-sizing: border-box;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            color: #555;
+            margin-bottom: 12px;
+            color: #333;
+            font-size: 16px;
         }
 
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
+        input, select {
+            width: calc(100% - 20px);
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid #3498db;
             border-radius: 4px;
+            box-sizing: border-box;
             transition: all 0.3s ease;
+            font-size: 16px;
+            background-color: #f9f9f9;
         }
 
-        input[type="text"]:focus,
-        input[type="password"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        input:focus, select:focus {
+            border-color: #0078d4;
+            box-shadow: 0 0 8px rgba(0, 120, 212, 0.5);
         }
 
-        input[type="text"],
-        input[type="password"],
-        input[type="submit"],
-        input[type="reset"] {
-            display: block;
-            margin: 10px auto;
+        select {
+            appearance: none;
+            padding: 14px 20px;
+            background: #fff url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%230078d4" width="18px" height="18px"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 16px center;
+            background-size: 18px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
 
         input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 16px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-            display: inline-block;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #0056b3;
+            background-color: #0078d4;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Assign a Mechanic</h2>
-        <?php if (!empty($error)) { ?>
-            <p style="color: red;"><?php echo $error; ?></p>
-        <?php } ?>
-        <form autocomplete="off" action="requestedit.php" method="POST" onsubmit="return validatePassword()">
-             <label for="mechanicId">Owner ID:</label>
-            <input type="text" id="mechanicId" value="<?php echo $row['id']; ?>" name="owner" required readonly>
+        <h2>Request Details Form</h2>
 
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" value="<?php echo $row['contact_name']; ?>" name="name" required readonly>
+        <?php
+        session_start();
+            // Assuming you have a connection to the database
+            include '../includes/connection.php';
+            $sql = "SELECT * FROM mechanicreg";
+              $mechanicId =$_GET['id']; // Adjust this based on your URL structure
+              $_SESSION['id']=$mechanicId;
+$result = $conn->query($sql);
 
-           
-            <label for="phone">Phone:</label>
-            <input type="text" id="phone" value="<?php echo $row['contact_phone']; ?>" name="phone" required readonly>
+// Store fetched services in an array
+$services = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $services[] = $row['mech_id'];
+    }
+}
 
-            <label for="email">Email:</label>
-            <input type="text" id="email" value="<?php echo $row['contact_email']; ?>" name="email" required readonly>
+          
 
-            <label for="typeOfService">Address:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['contact_address']; ?>" name="address" required readonly>
+            $sql = "SELECT * FROM request WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $mechanicId);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-           
-
-            <label for="typeOfService">Vehicle Registration:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['vehicle_registration']; ?>" name="vreg" required readonly>
-
-             <label for="typeOfService">Vehicle Model:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['vehicle_model']; ?>" name="vmodel" required readonly>
-
-            <label for="typeOfService">Services:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['issue_desc']; ?>" name="services" required readonly>
-
-             <label for="typeOfService">Request type:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['req_status']; ?>" name="rtype" required readonly>
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
 
 
+            }
+          
+        ?>
 
-            <input type="submit" value="Assign">
+        <form action="assign.php" method="post" class="form">
+            <div class="column">
+                <label for="firstname">User Name:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['contact_name']; ?>" required>
+
+                <label for="lastname">User Email:</label>
+                <input readonly type="text" id="lastname" name="lastname" value="<?php echo $row['contact_email']; ?>" required>
+
+                <label for="mech_id">User ID:</label>
+                <input readonly type="text" id="mech_id" name="mech_id" value="<?php echo $row['user_id']; ?>" required>
+
+                <label for="phone">Phone:</label>
+                <input readonly type="tel" id="phone" name="phone" value="<?php echo $row['contact_phone']; ?>" required>
+
+                 <label for="firstname">Contact Address:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['contact_address']; ?>" required>
+
+                 <label for="firstname">County:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['county']; ?>" required>
+
+                
+
+
+
+            </div>
+
+            <div class="column">
+
+                 <label for="firstname">Sub-county:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['sub_county']; ?>" required>
+
+
+                 <label for="firstname">Vehicle Model:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['vehicle_model']; ?>" required>
+
+                 <label for="firstname">Issue Reported:</label>
+                <input readonly type="text" id="firstname" name="firstname" value="<?php echo $row['issue_desc']; ?>" required>
+
+                 <label for="firstname">Date Reported:</label>
+                <input readonly type="date" id="firstname" name="firstname" value="<?php echo $row['req_date']; ?>" required>
+
+                 <label for="firstname">Time Reported:</label>
+                <input readonly type="time" id="firstname" name="firstname" value="<?php echo $row['req_time']; ?>" required>
+
+                
+
+
+                   <label for="typeOfService">Assign Mechanic:</label>
+            <select id="typeOfService" name="typeOfService" required>
+                <?php
+                // Loop through the fetched services and create options in the select dropdown
+                foreach ($services as $service) {
+                    echo "<option value='$service'>$service</option>";
+                }
+                ?>
+            </select>
+               
+
+
+
+
+               
+            </div>
+
+            <div class="button-container">
+                <input type="submit" value="Assign Mechanic">
+            </div>
         </form>
-        <a href="request.php">Back to User List</a>
+
+        
     </div>
 </body>
 </html>

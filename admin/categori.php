@@ -49,6 +49,14 @@ $users= $row1['count_records'];
 $feedback= $row2['count_records'];
 $requests= $row3['count_records'];
 
+$sql_select = "SELECT * FROM admin WHERE id=$id";
+$result7=mysqli_query($conn,$sql_select);
+$row7=mysqli_fetch_assoc($result7);
+$name7=$row7['firstname'];
+$name8=$row7['lastname'];
+$result_select = $conn->query($sql_select);
+$row = $result_select->fetch_assoc();
+
 
 $results_per_page = 5; // Number of items per page
 
@@ -81,7 +89,7 @@ $result = $conn->query($sql);
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title>Admin Dashboard</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -435,10 +443,14 @@ $result = $conn->query($sql);
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <?php if ($row['photo'] !== '') { ?>
+                        <img style="border-radius:50%;" src="<?php echo $row['photo']; ?>" alt="Profile Image" class="profile-img">
+                    <?php } else { ?>
+                        <p><img style="border-radius: 50%;" src="dist/img/avatar.png"></p>
+                    <?php } ?>
         </div>
         <div class="info">
-          <a href="#" class="d-block"><?php echo strtoupper($id); ?></a>
+          <a href="#" class="d-block"><?php echo strtoupper($name7.' '.$name8); ?></a>
         </div>
       </div>
 
@@ -515,7 +527,7 @@ $result = $conn->query($sql);
             <ul class="nav nav-treeview">
               
               <li class="nav-item">
-                <a href="category.php" class="nav-link">
+                <a href="categori.php" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Category List</p>
                 </a>
@@ -832,11 +844,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (hour<6) {
       greeting = "Good Morning";
     }else if (hour<12) {
-      greeting = "Good Afternoon";
-    }else if (hour<18) {
-      greeting = "Good Evening";
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
     }else{
-      greeting = "Good Night";
+      greeting = "Good Evening!";
     }
     document.getElementById("demo").innerHTML = greeting;
 

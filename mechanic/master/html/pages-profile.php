@@ -1,12 +1,12 @@
 
 <?php
 session_start();
-$userEmail = $_SESSION['email'];
+$userEmail = $_SESSION['mech_id'];
 // Include the database connection
 include 'includes/connection.php';
 
 // SQL query to fetch user profile information
-$sql = "SELECT * FROM mechanicreg WHERE mech_email = '$userEmail'";
+$sql = "SELECT * FROM mechanicreg WHERE mech_id = '$userEmail'";
 
 $result = mysqli_query($conn, $sql);
 
@@ -127,22 +127,71 @@ $conn->close();
     <style type="text/css"></style>
 <![endif]-->
     <style type="text/css">
-        .profile-details {
-  padding: 20px;
-}
+         .profile-details {
+        padding: 20px;
+    }
 
-.profile-details h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+    .profile-details h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-.profile-details p {
-  margin-bottom: 10px;
-}
+    .profile-details table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
-.profile-details strong {
-  font-weight: bold;
-}
+    .profile-details th,
+    .profile-details td {
+        border: 1px solid #e2e2e2;
+        padding: 12px;
+        text-align: left;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .profile-details th {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .profile-details tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .profile-details td:first-child {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .profile-details .edit-button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-details .edit-button:hover {
+        background-color: #218838;
+    }
+
+    .profile-details .edit-button:focus {
+        outline: none;
+    }
 
     </style>
 </head>
@@ -184,7 +233,7 @@ $conn->close();
                         <span class="logo-text">
                             <!-- dark Logo text -->
                            <!-- <img src="../assets/images/logo-light-text.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color:white;">ronny omondi</p>
+                           <p id="demo" style="color:white;"></p>
 
                         </span>
                     </a>
@@ -232,7 +281,7 @@ $conn->close();
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../assets/images/users/user.jpeg" alt="user" class="profile-pic me-2"> <?php echo $email; ?>
+                                <img src="../assets/images/users/user.jpeg" alt="user" class="profile-pic me-2"> <?php echo $userEmail; ?>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
                         </li>
@@ -371,16 +420,33 @@ $conn->close();
                     <div class="col-lg-8 col-xlg-9 col-md-7">
                         <div class="card">
                             <div class="card-body">
-                                <h1>User Profile</h1>
-                                 <div class="profile-details">
-           
-            <p><strong>First Name:</strong> <?php echo $firstname; ?></p><br><br><br>
-            <p><strong>Last Name:</strong> <?php echo $lastname; ?></p><br><br><br>
-            <p><strong>Phone:</strong> <?php echo $phone; ?></p><br><br><br>
-            <p><strong>Email:</strong> <?php echo $userEmail; ?></p><br><br><br>
-            <p><strong>Type of Service:</strong> <?php echo $service; ?></p>
-        </div>
-        
+                                <h1>My Profile</h1>
+                                <div class="profile-details">
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">First Name</th>
+                <td><?php echo $firstname; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Last Name</th>
+                <td><?php echo $lastname; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Phone</th>
+                <td><?php echo $phone; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Email</th>
+                <td><?php echo $email; ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Type of Service</th>
+                <td><?php echo $service; ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                                 
                             </div>
                         </div>
@@ -396,60 +462,52 @@ $conn->close();
             </div>
             <div class="modal-body">
                 <!-- Include your form here -->
-                <form action="process_request.php" method="post" class="advanced-form">
-                    <!-- Form fields go here -->
+               <form action="process_profile_update.php" method="post" class="advanced-form">
+    <div class="form-group">
+        <label for="user_id" class="form-label">User ID:</label>
+        <input type="text" class="form-control" id="user_id" name="user_id" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="vehicle_registration" class="form-label">Vehicle Registration Number:</label>
-                        <input type="text" class="form-control" id="vehicle_registration" name="vehicle_registration" required>
-                    </div>
+    <div class="form-group">
+        <label for="first_name" class="form-label">First Name:</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="issue_description" class="form-label">Issue Description:</label>
-                        <select name="issue_description" id="issue_description" class="form-control" required>
-                            <option value="" disabled selected>Select Issue Description</option>
-                            <?php foreach ($services as $service) : ?>
-                                <option value="<?php echo $service['id']; ?>"><?php echo $service['service_name']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+    <div class="form-group">
+        <label for="last_name" class="form-label">Last Name:</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" required>
+    </div>
 
-                    <div class="form-group">
-                        <label for="county" class="form-label">County:</label>
-                        <select name="county" id="county" class="form-control" onchange="populateSubCounties()" required>
-                            <option value="" disabled selected>Select County</option>
-                            <?php foreach ($counties as $county) : ?>
-                                <option value="<?php echo $county['id']; ?>"><?php echo $county['county_name']; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
+    <div class="form-group">
+        <label for="mech" class="form-label">Mechanic Status:</label>
+        <select name="mech" id="mech" class="form-control" required>
+            <option value="0">Not a Mechanic</option>
+            <option value="1">Mechanic</option>
+        </select>
+    </div>
 
-                    <div class="form-group">
-                        <label for="sub_county" class="form-label">Sub-County:</label>
-                        <select name="sub_county" id="sub_county" class="form-control" required>
-                            <option value="" disabled selected>Select Sub-County</option>
-                        </select>
-                    </div>
+    <div class="form-group">
+        <label for="mech_id" class="form-label">Mechanic ID:</label>
+        <input type="text" class="form-control" id="mech_id" name="mech_id">
+    </div>
 
-                    <div class="form-group">
-                        <label for="contact_address" class="form-label">Contact Address:</label>
-                        <input type="text" class="form-control" id="contact_address" name="contact_address" required>
-                    </div>
+    <div class="form-group">
+        <label for="phone" class="form-label">Phone:</label>
+        <input type="text" class="form-control" id="phone" name="phone">
+    </div>
 
-                    <div class="form-group">
-                        <label for="req_date" class="form-label">Request Date:</label>
-                        <input type="date" class="form-control" id="req_date" name="req_date" required>
-                    </div>
+    <div class="form-group">
+        <label for="mech_email" class="form-label">Mechanic Email:</label>
+        <input type="email" class="form-control" id="mech_email" name="mech_email">
+    </div>
 
-                    <div class="form-group">
-                        <label for="req_time" class="form-label">Request Time:</label>
-                        <input type="time" class="form-control" id="req_time" name="req_time" required>
-                    </div>
+    <!-- Other existing form fields -->
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update Profile</button>
+    </div>
+</form>
+
                 <!-- End of the form -->
             </div>
         </div>
@@ -527,6 +585,23 @@ $conn->close();
             }
         }
     </script>
+    <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
+    </script>
+
 </body>
 
 </html>

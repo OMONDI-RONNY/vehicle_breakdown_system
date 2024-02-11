@@ -13,13 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql = "INSERT INTO feedback (email, name, comment) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sss", $userEmail, $userName, $userComment);
+    $stmt->execute();
 
-    if ($stmt->execute()) {
-        echo "Feedback submitted successfully!";
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
+   
     // Close the statement
     $stmt->close();
 }
@@ -212,7 +208,7 @@ mysqli_free_result($servicesResult);
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
                            <!-- <img src="../assets/images/logo-light-icon.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color: white;">ronny</p>
+                          
 
                         </b>
                         <!--End Logo icon -->
@@ -220,6 +216,7 @@ mysqli_free_result($servicesResult);
                         <span class="logo-text">
                             <!-- dark Logo text -->
                          <!--   <img src="../assets/images/logo-light-text.png" alt="homepage" class="dark-logo" />-->
+                          <p id="demo" style="color:white;">ronny omondi</p>
 
                         </span>
                     </a>
@@ -306,16 +303,20 @@ mysqli_free_result($servicesResult);
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notifications</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notifications</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
                         </li>
                          <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
                                     class="hide-menu">FAQs</span></a>
                         </li>
+                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                href="bot.html" aria-expanded="false"><i
+                                    class="mdi mdi-comment me-2"></i><span class="hide-menu">Chats Us</span></a>
+                                </li>
                        
                     </ul>
 
@@ -368,7 +369,7 @@ mysqli_free_result($servicesResult);
                     </div>
                     <div class="col-md-6 col-4 align-self-center">
                         <div class="text-end upgrade-btn">
-                           ronny
+                           <a href="logout.php">LOGOUT</a>
                         </div>
                     </div>
                 </div>
@@ -517,6 +518,22 @@ mysqli_free_result($servicesResult);
                 });
             }
         }
+    </script>
+     <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
     </script>
 
 </body>

@@ -134,10 +134,7 @@ if (isset($_GET['id'])) {
             }
             ?>
             <table class="fadeInAnimation">
-                <tr>
-                    <td>User ID:</td>
-                    <td><?php echo $mechanicDetails['id']; ?></td>
-                </tr>
+               
                 <tr>
                     <td>Request ID:</td>
                     <td><?php echo $mechanicDetails['user_id']; ?></td>

@@ -12,7 +12,7 @@ if (isset($_GET['id'])) {
     $mechanicId = $_GET['id'];
 
     // Query to fetch details of the selected mechanic
-    $sql = "SELECT * FROM vehicleowners WHERE id = $mechanicId";
+    $sql = "SELECT * FROM feedback WHERE id = $mechanicId";
     $result = mysqli_query($conn, $sql);
 
     if ($result && mysqli_num_rows($result) > 0) {
@@ -22,7 +22,7 @@ if (isset($_GET['id'])) {
         mysqli_close($conn);
     } else {
         // Mechanic not found or query error
-        $error = "Mechanic not found";
+        $error = "Feedback not found";
     }
 } else {
     // If ID is not provided in the URL
@@ -35,7 +35,7 @@ if (isset($_GET['id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View User Details</title>
+    <title>View Feedback Details</title>
     <style>
         /* Add your CSS styles here */
      body {
@@ -143,7 +143,7 @@ img {
     <div class="container">
         <?php if (isset($mechanicDetails) && !isset($error)) { ?>
               <a href="#" class="print-button" onclick="window.print()">Print</a>
-            <h2>User Details</h2>
+            <h2>Feedback Details</h2>
             <?php
             if (!empty($mechanicDetails['photo'])) {
                 echo '<img src="' . $mechanicDetails['photo'] . '" alt="Mechanic Image" style="width: 200px; height: auto; display: block; margin: 0 auto 20px;" class="fadeInAnimation">';
@@ -152,29 +152,20 @@ img {
             }
             ?>
             <table class="fadeInAnimation">
+                
                 <tr>
-                    <td>ID:</td>
-                    <td><?php echo $mechanicDetails['vehicleID']; ?></td>
+                    <td>Name:</td>
+                    <td><?php echo $mechanicDetails['name']; ?></td>
                 </tr>
-                <tr>
-                    <td>First Name:</td>
-                    <td><?php echo $mechanicDetails['firstname']; ?></td>
-                </tr>
-                <tr>
-                    <td>Last Name:</td>
-                    <td><?php echo $mechanicDetails['lastname']; ?></td>
-                </tr>
+               
                 <tr>
                     <td>Email:</td>
                     <td><?php echo $mechanicDetails['email']; ?></td>
                 </tr>
+              
                 <tr>
-                    <td>Phone Number:</td>
-                    <td><?php echo $mechanicDetails['phone']; ?></td>
-                </tr>
-                <tr>
-                    <td>Vehicle Model:</td>
-                    <td><?php echo $mechanicDetails['vehicleModel']; ?></td>
+                    <td>Comment:</td>
+                    <td><?php echo $mechanicDetails['comment']; ?></td>
                 </tr>
                 <!-- Add other details you want to display -->
             </table>
@@ -182,9 +173,9 @@ img {
 
             
             <!-- Back button to navigate to mechanic.php -->
-            <a href="users.php" class="back-link">Back</a>
+            <a href="feedback.php" class="back-link">Back</a>
         <?php } else { ?>
-            <p><?php echo isset($error) ? $error : 'No details available'; ?></p>
+            <p><?php echo isset($error) ? $error : 'No Feedback available'; ?></p>
         <?php } ?>
     </div>
 </body>

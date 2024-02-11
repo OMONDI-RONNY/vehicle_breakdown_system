@@ -54,6 +54,10 @@ $users= $row1['count_records'];
 $feedback= $row2['count_records'];
 $requests= $row3['count_records'];
 
+$sql_select = "SELECT * FROM admin WHERE id=$id";
+$result_select = $conn->query($sql_select);
+$row = $result_select->fetch_assoc();
+
 // Close the connection
 mysqli_close($conn);
 ?>
@@ -329,7 +333,11 @@ mysqli_close($conn);
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+          <?php if ($row['photo'] !== '') { ?>
+                        <img style="border-radius:50%;" src="<?php echo $row['photo']; ?>" alt="Profile Image" class="profile-img">
+                    <?php } else { ?>
+                        <p><img style="border-radius: 50%;" src="dist/img/avatar.png"></p>
+                    <?php } ?>
         </div>
         <div class="info">
           <a href="#" class="d-block"><?php echo strtoupper($name7.' '.$name8); ?></a>
@@ -594,7 +602,7 @@ mysqli_close($conn);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 echo "<tr>
-                        <td>" . $row['id'] . "</td>
+                        <td>" . $row['mech_id'] . "</td>
                         <td>" . $row['firstname'] . "</td>
                         <td>" . $row['mech_email'] . "</td>
                         <td>" . $row['status'] . "</td>
@@ -606,7 +614,7 @@ mysqli_close($conn);
                       </tr>";
             }
         } else {
-            echo "<tr><td colspan='5'>No users found</td></tr>";
+            echo "<tr><td colspan='5'>No Mechanics found</td></tr>";
         }
 
         echo "</table>";

@@ -386,7 +386,7 @@ mysqli_close($conn);
 <section class="section" id="contact">
   <h2>Contact Us</h2>
   <p>For immediate assistance or inquiries, please reach out to us:</p>
-  <p>Phone: <a href="tel:123456789">123-456-789</a><br>Email: <a href="mailto:info@example.com">info@example.com</a><br>Address: 123 Street, City, Country</p>
+  <p>Phone: <a href="tel:123456789">079-647-1436</a><br>Email: <a href="mailto:omoron37@gmail.com.com">omoron37@gmail.com</a><br>Address: 33 Maseno, Nairobi, Kenya</p>
 
   <!-- Social Media Links -->
  

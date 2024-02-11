@@ -2,12 +2,12 @@
 // Include the connection file
 include 'includes/connection.php';
 session_start();
-if (!isset($_SESSION['email'])) {
+if (!isset($_SESSION['mech_id'])) {
     header("Location: ../../mechlog.php");
     exit();
 }
 
-$email=$_SESSION['email'];
+$id=$_SESSION['mech_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
@@ -221,7 +221,7 @@ mysqli_free_result($servicesResult);
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
                            <!-- <img src="../assets/images/logo-light-icon.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color: white;">ronny</p>
+                           <p id="demo" style="color: white;">ronny</p>
 
                         </b>
                         <!--End Logo icon -->
@@ -276,7 +276,7 @@ mysqli_free_result($servicesResult);
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../assets/images/users/1.jpg" alt="user" class="profile-pic me-2"><?php echo $email;?>
+                                <img src="../assets/images/users/1.jpg" alt="user" class="profile-pic me-2"><?php echo $id;?>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
                         </li>
@@ -418,6 +418,12 @@ mysqli_free_result($servicesResult);
     <?php
         include '../includes/connection.php';
 
+
+        $mech="SELECT * FROM mechanicreg WHERE mech_id='$id'";
+        $mechresult=mysqli_query($conn,$mech);
+        $mechfetch=mysqli_fetch_assoc($mechresult);
+        $mechID=$mechfetch['mech_id'];
+
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 5; // Records per page (default: 5)
         $page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page, default is 1
 
@@ -426,7 +432,7 @@ mysqli_free_result($servicesResult);
         $search = isset($_GET['search']) ? $_GET['search'] : ''; // Search keyword
 
         // Modify the SQL query to include search and limit
-        $sql = "SELECT * FROM request";
+        $sql = "SELECT * FROM request WHERE mechanic_assigned='$mechID'";
         if ($search !== '') {
             $sql .= " WHERE name LIKE '%$search%' OR email LIKE '%$search%' OR age LIKE '%$search%'";
         }
@@ -458,7 +464,7 @@ mysqli_free_result($servicesResult);
                       </tr>";
             }
         } else {
-            echo "<tr><td colspan='5'>No users found</td></tr>";
+            echo "<tr><td colspan='5'>No Requests found</td></tr>";
         }
 
         echo "</table>";
@@ -636,6 +642,22 @@ mysqli_free_result($servicesResult);
                 });
             }
         }
+    </script>
+     <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
     </script>
 
 </body>

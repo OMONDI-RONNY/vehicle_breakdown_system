@@ -94,22 +94,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <style type="text/css"></style>
 <![endif]-->
     <style type="text/css">
-        .profile-details {
-  padding: 20px;
-}
+     .profile-details {
+        padding: 20px;
+    }
 
-.profile-details h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+    .profile-details h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-.profile-details p {
-  margin-bottom: 10px;
-}
+    .profile-details table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
 
-.profile-details strong {
-  font-weight: bold;
-}
+    .profile-details th,
+    .profile-details td {
+        border: 1px solid #e2e2e2;
+        padding: 12px;
+        text-align: left;
+        text-transform: uppercase;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .profile-details th {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    .profile-details tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .profile-details td:first-child {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .profile-details .edit-button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-details .edit-button:hover {
+        background-color: #218838;
+    }
+
+    .profile-details .edit-button:focus {
+        outline: none;
+    }
 
     </style>
 </head>
@@ -151,7 +200,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <span class="logo-text">
                             <!-- dark Logo text -->
                            <!-- <img src="../assets/images/logo-light-text.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color:white;">ronny omondi</p>
+                           <p id="demo" style="color:white;">ronny omondi</p>
 
                         </span>
                     </a>
@@ -238,16 +287,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notification</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notification</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-comment"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
                                     class="hide-menu">FAQs</span></a>
                         </li>
+                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                                href="bot.html" aria-expanded="false"><i
+                                    class="mdi mdi-comment me-2"></i><span class="hide-menu">Chats Us</span></a>
+                                </li>
+                       
                        
                     </ul>
 
@@ -269,7 +323,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                     <div class="col-4 link-wrap">
                         <!-- item-->
-                        <a href="" class="link" data-toggle="tooltip" title="" data-original-title="Logout"><i
+                        <a href="logout.php" class="link" data-toggle="tooltip" title="" data-original-title="Logout"><i
                                 class="mdi mdi-power"></i></a>
                     </div>
                 </div>
@@ -324,7 +378,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <div class="card-body profile-card">
                                 <center class="mt-4"> <img src="../assets/images/users/user.jpeg"
                                         class="rounded-circle" width="150" />
-                                    <h4 class="card-title mt-2"><?php echo strtoupper($firstname.' '.$lastname); ?></h4>
+                                   <h4 class="card-title mt-2" style="font-size: 28px; color: #007bff; text-transform: uppercase; font-weight: bold;"><?php echo $firstname . ' ' . $lastname; ?></h4>
+
                                   <!--  <h6 class="card-subtitle">Accoubts Manager Amix corp</h6>-->
                                     <div class="row text-center justify-content-center">
                                         
@@ -338,14 +393,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="col-lg-8 col-xlg-9 col-md-7">
                         <div class="card">
                             <div class="card-body">
-                                <h1>User Profile</h1>
-                                 <div class="profile-details">
-           
-            <p><strong>First Name:</strong> <?php echo $firstname; ?></p><br><br><br>
-            <p><strong>Last Name:</strong> <?php echo $lastname; ?></p><br><br><br>
-            <p><strong>Phone:</strong> <?php echo $phone; ?></p><br><br><br>
-            <p><strong>Email:</strong> <?php echo $userEmail; ?></p><br><br><br>
-            <p><strong>Vehicle Model:</strong> <?php echo $vehicle_model; ?></p>
+                                <h1>My Profile</h1>
+                                  <div class="profile-details">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Field</th>
+                    <th>Details</th>
+                </tr>
+                <tr>
+                    <td>First Name</td>
+                    <td><?php echo $firstname; ?></td>
+                </tr>
+                <tr>
+                    <td>Last Name</td>
+                    <td><?php echo $lastname; ?></td>
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td><?php echo $phone; ?></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><?php echo $userEmail; ?></td>
+                </tr>
+                <tr>
+                    <td>Vehicle Model</td>
+                    <td><?php echo $vehicle_model; ?></td>
+                </tr>
+            </table>
         </div>
         
                                 
@@ -467,6 +542,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 });
             }
         }
+    </script>
+     <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
     </script>
 </body>
 

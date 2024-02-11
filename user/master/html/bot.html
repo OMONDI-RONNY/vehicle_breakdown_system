@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style1.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+<style>
+ body {
+            background: linear-gradient(135deg, #3494E6, #EC6EAD);
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .wrapper {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .title {
+            color: #2C3E50;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .form {
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .inbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .icon {
+            margin-right: 10px;
+        }
+
+        .msg-header {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .msg-header p {
+            margin: 0;
+        }
+
+        .typing-field {
+            margin-top: 20px;
+        }
+
+        .input-data {
+            display: flex;
+            align-items: center;
+        }
+
+        #data {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #data:hover,
+        #data:focus {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        #send-btn {
+            background-color: #2C3E50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-btn:hover {
+            background-color: #3498db;
+        }
+    </style>
+<body>
+    <div class="wrapper">
+        <div class="title">Online Chatbot</div>
+        <div class="form">
+            <div class="bot-inbox inbox">
+                <div class="icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="msg-header">
+                    <p>Hello there, how can I help you?</p>
+                </div>
+            </div>
+        </div>
+        <div class="typing-field">
+            <div class="input-data">
+                <input id="data" type="text" placeholder="Type something here.." required>
+                <button id="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $("#send-btn").on("click", function(){
+                $value = $("#data").val();
+                $msg = '<div class="user-inbox inbox"><div class="msg-header"><p>'+ $value +'</p></div></div>';
+                $(".form").append($msg);
+                $("#data").val('');
+
+                $.ajax({
+                    url: 'message.php',
+                    type: 'POST',
+                    data: 'text='+$value,
+                    success: function(result){
+                        $replay = '<div class="bot-inbox inbox"><div class="icon"><i class="fas fa-user"></i></div><div class="msg-header"><p>'+ result +'</p></div></div>';
+                        $(".form").append($replay);
+                        $(".form").scrollTop($(".form")[0].scrollHeight);
+                    }
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>
