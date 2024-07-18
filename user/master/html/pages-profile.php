@@ -27,6 +27,7 @@ if ($result) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['fname'];
     $lname = $_POST['lname'];
+   // $model=$_POST['model'];
   //  $service = $_POST['services'];
   //  $phone = $_POST['phone'];
     $email = $_POST['email'];
@@ -39,14 +40,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //$password = $_POST['password'];
    // $confirmPassword = $_POST['confirmPassword'];
 
-  /**  if ($password !== $confirmPassword) {
-        $error = "Passwords do not match!";
-    } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);**/
+  
 
-        $sql = "UPDATE vehicleowners SET  firstname=?, lastname=?, email=?,  WHERE id=?";
+        $sql = "UPDATE vehicleowners SET  firstname=?, lastname=?, email=?  WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssi", $name, $phone,$email, $address,$vreg, $model, $service, $rtype,$id);
+        $stmt->bind_param("ssssi", $name, $lname,$email,$id);
         $result = $stmt->execute();
 
         if ($result) {
@@ -57,7 +55,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     
 }
-
+// Fetch vehicle models from the database
+$sql = "SELECT * FROM kenya_vehicle_models";
+$result = $conn->query($sql);
+$models = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $models[] = $row['model'];
+    }
+}
 
 
 // Fetch counties from the database
@@ -157,8 +163,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .profile-details .edit-button:focus {
+        
         outline: none;
     }
+    label {
+            display: block;
+            margin: 10px 0;
+        }
+        select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    /* Additional styles */
+    background-color: #fff; /* Set the background color */
+    color: #333; /* Set the text color */
+    font-size: 14px; /* Adjust the font size */
+    margin-bottom: 10px; /* Add margin to match other fields */
+}
 
     </style>
 </head>
@@ -433,39 +455,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="serviceRequestModalLabel">Service Request Form</h5>
+                <h5 class="modal-title" id="serviceRequestModalLabel">Update Profile</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Include your form here -->
-                <form action="pages-profile.php" method="post" class="advanced-form">
-                    <!-- Form fields go here -->
+                <form action="process_profile_update.php" method="post" class="advanced-form">
+   
 
-                    <div class="form-group">
-                        <label for="first" class="form-label">First Name:</label>
-                        <input type="text" class="form-control" id="fname" name="fname" required>
-                    </div>
+   <div class="form-group">
+       <label for="first_name" class="form-label">First Name:</label>
+       <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $firstname; ?>" required>
+   </div>
+
+   <div class="form-group">
+       <label for="last_name" class="form-label">Last Name:</label>
+       <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $lastname; ?>" required>
+   </div>
+
+   
+  
+
+   <div class="form-group">
+       <label for="phone" class="form-label">Phone:</label>
+       <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $phone; ?>">
+   </div>
+
+  <!-- <div class="form-group">
+       <label for="phone" class="form-label">Vehicle Model:</label>
+       <select id="vehicleModel" name="model" required value="<?php echo $vehicle_model; ?>">
+                <option value="" disabled selected>Select Vehicle Model</option>
+                <?php foreach ($models as $model) { ?>
+                    <option value="<?php echo $model; ?>"><?php echo $model; ?></option>
+                <?php } ?>
+            </select>
+   </div>-->
 
 
-                     <div class="form-group">
-                        <label for="first" class="form-label">Last Name:</label>
-                        <input type="text" class="form-control" id="lname" name="lname" required>
-                    </div>
+   <div class="form-group">
+       <!--<label for="mech_email" class="form-label">Email:</label>-->
+       <input type="hidden" class="form-control" id="mech_email" name="mech_email" value="<?php echo $email; ?>" readonly>
+   </div>
 
-                   
+   <!-- Other existing form fields -->
 
-                   
-
-                    <div class="form-group">
-                        <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-
-                   
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </form>
+   <div class="form-group">
+       <button type="submit" class="btn btn-primary">Update Profile</button>
+   </div>
+</form>
                 <!-- End of the form -->
             </div>
         </div>

@@ -1,44 +1,8 @@
 <?php
 session_start();
 include '../includes/connection.php';
-
-
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = $_POST['name'];
-    $id = $_POST['owner'];
-    $service = $_POST['services'];
-    $phone = $_POST['phone'];
-    $email = $_POST['email'];
-    $model = $_POST['vmodel'];
-    $rtype = $_POST['rtype'];
-    $vreg = $_POST['vreg'];
-   // $vname = $_POST['vname'];
-   // $vehicle_type = $_POST['vehicle_type'];
-    $address = $_POST['address'];
-    //$password = $_POST['password'];
-   // $confirmPassword = $_POST['confirmPassword'];
-
-  /**  if ($password !== $confirmPassword) {
-        $error = "Passwords do not match!";
-    } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);**/
-
-        $sql = "UPDATE request SET  contact_name=?, contact_phone=?, contact_email=?, contact _address=?,vehicle_registration=?, vehicle_model=?, issue_desc=? ,req_status=? WHERE id=?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssi", $name, $phone,$email, $address,$vreg, $model, $service, $rtype,$id);
-        $result = $stmt->execute();
-
-        if ($result) {
-            header("Location: request.php");
-            exit();
-        } else {
-            $error = "Error updating record: " . $conn->error;
-        }
-    
-}
-
 $id = $_GET['id'];
+$_SESSION['req']=$id;
 $sql_select = "SELECT * FROM request WHERE id=?";
 $stmt_select = $conn->prepare($sql_select);
 $stmt_select->bind_param("i", $id);
@@ -48,7 +12,6 @@ $row = $result_select->fetch_assoc();
 
 $conn->close();
 ?>
-
 
 
 <!DOCTYPE html>
@@ -97,7 +60,9 @@ $conn->close();
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],
+        select
+         {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -147,7 +112,7 @@ $conn->close();
         <?php if (!empty($error)) { ?>
             <p style="color: red;"><?php echo $error; ?></p>
         <?php } ?>
-        <form autocomplete="off" action="requestedit.php" method="POST" onsubmit="return validatePassword()">
+        <form autocomplete="off" action="process-acceptance.php" method="POST" onsubmit="return validatePassword()">
              <label for="mechanicId">Owner ID:</label>
             <input type="text" id="mechanicId" value="<?php echo $row['id']; ?>" name="owner" required readonly>
 
@@ -174,12 +139,13 @@ $conn->close();
 
             <label for="typeOfService">Services:</label>
             <input type="text" id="typeOfService" value="<?php echo $row['issue_desc']; ?>" name="services" required readonly>
+             <label for="acceptReject">Accept/Reject:</label>
+            <select id="acceptReject" name="acceptReject" required>
+                <option value="1">Accept</option>
+                <option value="0">Reject</option>
+            </select>
 
-             <label for="typeOfService">Request type:</label>
-            <input type="text" id="typeOfService" value="<?php echo $row['req_status']; ?>" name="rtype" required readonly>
-
-
-
+           
             <input type="submit" value="Accept">
         </form>
         <a href="index.php">Back to User List</a>

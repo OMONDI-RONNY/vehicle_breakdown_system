@@ -1,6 +1,6 @@
 <?php
- include '../includes/connection.php';
- session_start();
+include '../includes/connection.php';
+session_start();
 
 if (!isset($_SESSION['id'])) {
     header("Location: adminlogin.php");
@@ -16,7 +16,17 @@ if (isset($_GET['id'])) {
         header("Location: mechanic.php");
         exit();
     } else {
-        echo "Error deleting record: " . $conn->error;
+        // Check if the error is due to a foreign key constraint
+        if ($conn->errno == 1451) {
+            // Display an alert and then redirect
+            echo "<script>
+                    alert('Error: This mechanic is associated with some requests. Please delete or update the associated requests first.');
+                    window.location.href='mechanic.php';
+                  </script>";
+        } else {
+            // For other errors, display the error message
+            echo "Error deleting record: " . $conn->error;
+        }
     }
 } else {
     echo "User ID not specified";

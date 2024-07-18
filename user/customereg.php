@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
     // Insert data into the database
-    $sql = "INSERT INTO vehicleowners (firstname, lastname,vehicleID,phone,email,vehicleModel,password) 
+    $sql = "INSERT INTO vehicleowners (firstname, lastname,id,phone,email,vehicleModel,password) 
             VALUES ('$fname', '$lname','$id','$phone','$email','$model','$hash')";
 
     if ($conn->query($sql) === TRUE) {
@@ -138,6 +138,28 @@ $conn->close();
             text-decoration: none;
             color: #007BFF;
         }
+        .tick-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+
+        .tick-list li {
+            color: red;
+            display: flex;
+            align-items: center;
+        }
+
+        .tick-list li::before {
+            content: "✓";
+            margin-right: 5px;
+        }
+
+        #passwordRequirements {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -146,18 +168,17 @@ $conn->close();
          <?php if(isset($error)) { ?>
             <p style="color: red;"><?php echo $error; ?></p>
         <?php } ?>
-        <form action="customereg.php" method="POST" autocomplete="off"  onsubmit="return validatePassword()">
+        <form id="myForm" onsubmit="return validateForm()" action="customereg.php" method="POST" autocomplete="off"  onsubmit="return validatePassword()">
             <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
+            <input type="text" id="firstName" name="firstName" pattern="[A-Za-z ]+" title="Please enter text only" required>
 
             <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
+            <input type="text" id="lastName" name="lastName" pattern="[A-Za-z ]+" title="Please enter text only" required>
 
             <label for="mechanicId">Customer ID:</label>
-            <input type="text" id="mechanicId" name="id" required>
-
+            <input type="text" id="mechanicId" name="id" pattern="[0-9]{8,10}" title="Please enter a valid national ID number" placeholder="e.g 39068465" required>
              <label for="mechanicId">Phone Number:</label>
-            <input type="number" id="mechanicId" name="phone" required minlength="10">
+             <input type="text" id="lastName" name="phone" pattern="[0-9]{10}" title="Please enter a 10-digit phone number" required placeholder="e.g 0796471436">
 
              <label for="mechanicId">Email:</label>
             <input type="email" id="mechanicId" name="email" required>
@@ -171,10 +192,12 @@ $conn->close();
             </select>
 
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" required onkeyup="checkPasswordStrength(this.value)">
+        <div id="passwordRequirements">At least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character.</div>
+        <ul id="tickList" class="tick-list"></ul>
 
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required onfocus="clearDescriptionAndTicks()">
 
             <input type="submit" value="Submit" name="register">
             <input type="reset" value="Clear">
@@ -183,5 +206,92 @@ $conn->close();
             Have an account? <a href="login.php">Login</a>
         </p>
     </div>
+   
+    <script>
+    function checkPasswordStrength(password) {
+        var strength = 0;
+        var tickList = document.getElementById("tickList");
+        tickList.innerHTML = ""; // Clear previous tick list
+
+        // Check for at least 8 characters
+        if (password.length >= 8) {
+            strength++;
+            appendTick("At least 8 characters");
+        }
+
+        // Check for at least one uppercase letter
+        if (/[A-Z]/.test(password)) {
+            strength++;
+            appendTick("At least one uppercase letter");
+        }
+
+        // Check for at least one lowercase letter
+        if (/[a-z]/.test(password)) {
+            strength++;
+            appendTick("At least one lowercase letter");
+        }
+
+        // Check for at least one digit
+        if (/\d/.test(password)) {
+            strength++;
+            appendTick("At least one digit");
+        }
+
+        // Check for at least one special character
+        if (/[$@$!%*?&#]/.test(password)) {
+            strength++;
+            appendTick("At least one special character");
+        }
+
+        // Display a message if all requirements are met
+        if (strength === 5) {
+            document.getElementById("passwordRequirements").style.display = "none";
+            return true;
+        } else {
+            document.getElementById("passwordRequirements").style.display = "block";
+            return false;
+        }
+    }
+
+    function appendTick(description) {
+        var tickList = document.getElementById("tickList");
+        var listItem = document.createElement("li");
+        listItem.appendChild(document.createTextNode(description));
+        tickList.appendChild(listItem);
+    }
+
+    function clearDescriptionAndTicks() {
+        var tickList = document.getElementById("tickList");
+        var passwordRequirements = document.getElementById("passwordRequirements");
+
+        tickList.innerHTML = "";
+        passwordRequirements.style.display = "none";
+    }
+
+    function validateForm() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        // Check if password criteria are met
+        if (!checkPasswordStrength(password)) {
+            alert("Password does not meet the criteria");
+            return false;
+        }
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return false;
+        }
+
+        // Add more validation logic as needed
+
+        return true; // Form submission will proceed if all validations pass
+    }
+
+    document.getElementById("password").addEventListener("input", function() {
+        checkPasswordStrength(this.value);
+    });
+</script>
 </body>
 </html>

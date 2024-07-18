@@ -2,7 +2,7 @@
 // Include the connection file
 include 'includes/connection.php';
 session_start();
-$email=$_SESSION['email'];
+//$email=$_SESSION['email'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
     $userEmail = $_POST['email'];
@@ -110,7 +110,7 @@ mysqli_free_result($servicesResult);
     <meta name="description"
         content="Material Pro Lite is powerful and clean admin dashboard template, inpired from Bootstrap Framework">
     <meta name="robots" content="noindex,nofollow">
-    <title>User Dashboard</title>
+    <title>Mechanic Dashboard</title>
     <link rel="canonical" href="https://www.wrappixel.com/templates/materialpro-lite/" />
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
@@ -212,7 +212,7 @@ mysqli_free_result($servicesResult);
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                             <!-- Dark Logo icon -->
                            <!-- <img src="../assets/images/logo-light-icon.png" alt="homepage" class="dark-logo" />-->
-                           <p style="color: white;">ronny</p>
+                           <p id="demo" style="color: white;">ronny</p>
 
                         </b>
                         <!--End Logo icon -->
@@ -267,7 +267,7 @@ mysqli_free_result($servicesResult);
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../assets/images/users/1.jpg" alt="user" class="profile-pic me-2"><?php echo $email;?>
+                                <img src="../assets/images/users/user.jpeg" alt="user" class="profile-pic me-2"><?php echo $email;?>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
                         </li>
@@ -306,14 +306,14 @@ mysqli_free_result($servicesResult);
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notifications</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notifications</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
                         </li>
                          <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
                                     class="hide-menu">FAQs</span></a>
                         </li>
                        
@@ -368,7 +368,7 @@ mysqli_free_result($servicesResult);
                     </div>
                     <div class="col-md-6 col-4 align-self-center">
                         <div class="text-end upgrade-btn">
-                           ronny
+                           
                         </div>
                     </div>
                 </div>
@@ -517,6 +517,22 @@ mysqli_free_result($servicesResult);
                 });
             }
         }
+    </script>
+    <script type="text/javascript">
+    const hour = new Date().getHours();
+    let greeting;
+    if (hour<6) {
+      greeting = "Good Morning";
+    }else if (hour<12) {
+      greeting = "Good Morning!";
+    }else if (hour<14) {
+      greeting = "Good Afternoon!";
+    }else{
+      greeting = "Good Evening!";
+    }
+    document.getElementById("demo").innerHTML = greeting;
+
+
     </script>
 
 </body>

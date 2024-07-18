@@ -81,7 +81,7 @@ $conn->close();
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            animation: slideIn 1s ease-in-out;
+            animation: slideIn 3s ease-in-out;
             box-sizing: border-box;
         }
 
@@ -188,7 +188,7 @@ $conn->close();
             </div>
 
             <p class="forgot-password">
-                <a href="passwordreset.php">Forgot Password</a>
+                <a href="passwordreset.php">Forgot Password</a> <b>OR</b> <a href="adminreg.php">Request to be Admin?</a>
             </p>
         </form>
     </div>

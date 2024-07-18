@@ -1,48 +1,73 @@
 <?php
+session_start();
 // Include the necessary files for database connection and email sending
-// Replace 'your_email_sending_function' with the actual function you use for sending emails
 include '../includes/connection.php';
-//require 'path/to/email/sending/function.php';
+require 'phpmailer/src/Exception.php';
+require 'phpmailer/src/PHPMailer.php';
+require 'phpmailer/src/SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 // Function to generate a random code
 function generateRandomCode($length = 6) {
     return bin2hex(random_bytes($length / 2));
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Assuming you have a form that submits the user's phone number
-    $userPhone = $_POST['phone']; // Replace with your actual form field name
+$error = ''; // Initialize the error variable
 
-    // Check if the phone number exists in the database
-    $checkQuery = "SELECT * FROM mechanicreg WHERE phone = '$userPhone'";
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Assuming you have a form that submits the user's email
+    $userEmail = $_POST['email']; // Replace with your actual form field name
+    $_SESSION['setter']=$userEmail;
+    
+
+    // Check if the email exists in the database
+    $checkQuery = "SELECT * FROM mechanicreg WHERE mech_email = '$userEmail'";
     $result = $conn->query($checkQuery);
 
     if ($result->num_rows > 0) {
         // Generate a random code
         $resetCode = generateRandomCode();
 
-        // Hash the reset code before storing it in the database
-       // $hashedCode = password_hash($resetCode, PASSWORD_DEFAULT);
-
-        // Store the user's phone and hashed code in the database
-        $insertQuery = "INSERT INTO password_reset (phone_number, reset_code, timestamp) VALUES ('$userPhone', '$resetCode', NOW())";
+        // Store the user's email and reset code in the database
+        $insertQuery = "INSERT INTO password_reset (email, reset_code, timestamp) VALUES ('$userEmail', '$resetCode', NOW())";
         $insertResult = $conn->query($insertQuery);
 
         if ($insertResult) {
-            // Send the reset code to the user via email or SMS
-            $emailSubject = "Password Reset Code";
-            $emailBody = "Your password reset code is: $resetCode"; // Customize the message as needed
-            $emailRecipient = $userPhone; // Change this to the user's phone number
+            // Send the reset code to the user via email
+            $mail = new PHPMailer(true);
 
-            // Replace 'your_email_sending_function' with the actual function you use for sending emails
-            your_email_sending_function($emailRecipient, $emailSubject, $emailBody);
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'omoron37@gmail.com';
+            $mail->Password = 'uxrgdwpdpujljjdf';
+            $mail->SMTPSecure = 'ssl';
+            $mail->Port = 465;
 
-            echo "Reset code generated and sent successfully. Check your phone for instructions.";
+            $mail->setFrom('omoron37@gmail.com');
+            $mail->addAddress($userEmail);
+            $mail->isHTML(true);
+            $mail->Subject = "Password Reset Code";
+            $mail->Body = "Your password reset code is: $resetCode";
+
+            try {
+                $mail->send();
+                echo "
+                <script>
+                alert('Reset code have been sent to you email');
+                window.location.href = 'code.php'; // Redirect to code.php
+                </script>
+                ";
+            } catch (Exception $e) {
+                $error = "Error sending email: {$mail->ErrorInfo}";
+            }
         } else {
-            echo "Error storing reset code in the database.";
+            $error = "Error storing reset code in the database.";
         }
     } else {
-        echo "Phone number not found in the database.";
+        $error = "Email is not registered.";
     }
 }
 
@@ -50,15 +75,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $conn->close();
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <!-- Head content remains the same -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset</title>
     <style>
+        /* Your CSS styles here */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -157,17 +183,18 @@ $conn->close();
 
 <div class="password-reset-container">
     <div class="password-reset-header">
-        <h2>Password Reset</h2>
+       
     </div>
     <div class="password-reset-form">
+    <h2>Password Reset</h2>
+        <?php if ($error) { ?>
+            <p style="color: red;"><?php echo $error; ?></p>
+        <?php } ?>
         <form action="passwordreset.php" method="post">
-          
-
             <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
             </div>
-
             <button type="submit" class="reset-button">Reset Password</button>
         </form>
         <div class="back-to-login">

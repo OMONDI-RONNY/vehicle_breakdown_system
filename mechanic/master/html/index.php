@@ -187,7 +187,71 @@ mysqli_free_result($servicesResult);
             color: white;
             border: 1px solid #4CAF50;
         }
-        /* ... */
+        .comment-btn {
+    background-color: #ffc107;
+    color: black;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  h2 {
+    text-align: center;
+  }
+  label {
+    font-weight: bold;
+  }
+  input[type="password"] {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .updateLink {
+   
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+
+       
     </style>
 </head>
 
@@ -276,7 +340,7 @@ mysqli_free_result($servicesResult);
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../assets/images/users/1.jpg" alt="user" class="profile-pic me-2"><?php echo $id;?>
+                                <img src="../assets/images/users/user.jpeg" alt="user" class="profile-pic me-2"><?php echo $id;?>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown"></ul>
                         </li>
@@ -304,9 +368,9 @@ mysqli_free_result($servicesResult);
                                 href="pages-profile.php" aria-expanded="false">
                                 <i class="mdi me-2 mdi-account-check"></i><span class="hide-menu">Profile</span></a>
                         </li>
-                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                       <!-- <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false" data-bs-toggle="modal" data-bs-target="#serviceRequestModal" ><i class="mdi me-2 mdi-table"></i><span
-                                    class="hide-menu">Request Service</span></a></li>
+                                    class="hide-menu">Request Service</span></a></li>-->
                        <!-- <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="icon-material.html" aria-expanded="false"><i
                                     class="mdi me-2 mdi-emoticon"></i><span class="hide-menu">Icon</span></a></li>-->
@@ -315,15 +379,20 @@ mysqli_free_result($servicesResult);
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notifications</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notifications</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
                         </li>
                          <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi mdi-help-circle me-2"></i><span
                                     class="hide-menu">FAQs</span></a>
+                        </li>
+                        
+                        <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        id="updateLink" class="updateLink" href="#" aria-expanded="false"><i class="mdi mdi-lock-outline"></i><span
+                                    class="hide-menu">Update Password</span></a>
                         </li>
                        
                     </ul>
@@ -377,7 +446,9 @@ mysqli_free_result($servicesResult);
                     </div>
                     <div class="col-md-6 col-4 align-self-center">
                         <div class="text-end upgrade-btn">
-                           ronny
+                           
+
+                        
                         </div>
                     </div>
                 </div>
@@ -419,10 +490,10 @@ mysqli_free_result($servicesResult);
         include '../includes/connection.php';
 
 
-        $mech="SELECT * FROM mechanicreg WHERE mech_id='$id'";
+        $mech="SELECT * FROM mechanicreg WHERE id='$id'";
         $mechresult=mysqli_query($conn,$mech);
         $mechfetch=mysqli_fetch_assoc($mechresult);
-        $mechID=$mechfetch['mech_id'];
+        $mechID=$mechfetch['id'];
 
         $limit = isset($_GET['limit']) ? $_GET['limit'] : 5; // Records per page (default: 5)
         $page = isset($_GET['page']) ? $_GET['page'] : 1; // Current page, default is 1
@@ -441,33 +512,53 @@ mysqli_free_result($servicesResult);
         $result = $conn->query($sql);
 
         echo "<table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Requested Service</th>
-                    <th>Actions</th>
-                </tr>";
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Requested Service</th>
+            <th>Actions</th>
+        </tr>";
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>
-                        <td>" . $row['id'] . "</td>
-                        <td>" . $row['contact_name'] . "</td>
-                        <td>" . $row['contact_phone'] . "</td>
-                        <td>" . $row['issue_desc'] . "</td>
-                        <td class='action-buttons'>
-                            <a href='requestview.php?action=view&id=" . $row['id'] . "' class='view-btn'><i class='fas fa-eye'></i> View</a>
-                             <a href='requestedit.php?action=edit&id=" . $row['id'] . "' class='edit-btn'><i class='fas fa-edit'></i> Accept</a>
-                           
-                        </td>
-                      </tr>";
-            }
-        } else {
-            echo "<tr><td colspan='5'>No Requests found</td></tr>";
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $commentButton = "<button type='button' class='btn btn-primary comment-btn' data-bs-toggle='modal' data-bs-target='#commentModal' data-request-id='" . $row['id'] . "'><i class='fas fa-comment'></i> Comment</button>";
+        $acceptButton = "<a href='requestedit.php?action=edit&id=" . $row['id'] . "' class='edit-btn'><i class='fas fa-edit'></i> Accept</a>";
+
+        // Check if accept column is not equal to 0
+        if ($row['acceptance'] != 0) {
+            // If condition is met, display the disabled button
+            $acceptButton = "<button type='button' class='btn btn-secondary accept-disabled' disabled><i class='fas fa-edit'></i> Accepted</button>";
         }
 
-        echo "</table>";
+        // Check if mechanic notes are not equal to 0
+        if (!empty($row['mechanic_notes'])) {
+            // If condition is met, disable the comment button and change its color to blue
+            $commentButton = "<button type='button' class='btn btn-secondary comment-disabled' disabled><i class='fas fa-comment'></i> Finished</button>";
+        }
+
+        echo "<tr>
+                <td>" . $row['id'] . "</td>
+                <td>" . $row['contact_name'] . "</td>
+                <td>" . $row['contact_phone'] . "</td>
+                <td>" . $row['issue_desc'] . "</td>
+                <td class='action-buttons'>
+                    <a href='requestview.php?action=view&id=" . $row['id'] . "' class='view-btn'><i class='fas fa-eye'></i> View</a>
+                    " . $acceptButton . "
+                    " . $commentButton . "
+                </td>
+              </tr>";
+    }
+} else {
+    echo "<tr><td colspan='5'>No Requests found</td></tr>";
+}
+
+echo "</table>";
+
+
+
+
+
 
         // Count total number of records
         $sqlCount = "SELECT COUNT(*) AS total FROM request";
@@ -537,7 +628,7 @@ mysqli_free_result($servicesResult);
             </div>
             <div class="modal-body">
                 <!-- Include your form here -->
-                <form action="process_request.php" method="post" class="advanced-form">
+                <form action="index.php" method="post" class="advanced-form">
                     <!-- Form fields go here -->
 
                     <div class="form-group">
@@ -596,13 +687,82 @@ mysqli_free_result($servicesResult);
         </div>
     </div>
 </div>
+<!-- Modal for Comment -->
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">Add Comment and Service Charge</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="comment-handler.php" method="post">
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment:</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="service_charge" class="form-label">Service Charge:</label>
+                        <input type="number" class="form-control" id="service_charge" name="service_charge" required>
+                    </div>
+                    <input type="hidden" id="request_id" name="request_id" value="">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Password Update</h2>
+    <form id="passwordUpdateForm" action="mechupdate.php" method="post">
+      <label for="currentPassword">Current Password:</label>
+      <input type="password" id="currentPassword" name="currentPassword" required>
+      <label for="newPassword">New Password:</label>
+      <input type="password" id="newPassword" name="newPassword" required>
+      <label for="confirmPassword">Confirm New Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" required>
+      <input type="submit" value="Update Password">
+    </form>
+  </div>
+</div>
 
 <script>
-    // Trigger the modal when the page is loaded
-    $(document).ready(function () {
-        $('#serviceRequestModal').modal('show');
+  var modal = document.getElementById("myModal");
+  var updateLink = document.getElementById("updateLink");
+  var closeButton = document.getElementsByClassName("close")[0];
+
+  updateLink.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+  closeButton.onclick = function() {
+    modal.style.display = "none";
+  }
+</script>
+ 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var commentButtons = document.querySelectorAll('.comment-btn');
+
+        commentButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var requestId = this.getAttribute('data-request-id');
+                document.getElementById('request_id').value = requestId;
+            });
+        });
     });
 </script>
+
+
+
 
 
     <script src="../assets/plugins/jquery/dist/jquery.min.js"></script>

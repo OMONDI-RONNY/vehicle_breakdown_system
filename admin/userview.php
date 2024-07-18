@@ -145,8 +145,8 @@ img {
               <a href="#" class="print-button" onclick="window.print()">Print</a>
             <h2>User Details</h2>
             <?php
-            if (!empty($mechanicDetails['photo'])) {
-                echo '<img src="' . $mechanicDetails['photo'] . '" alt="Mechanic Image" style="width: 200px; height: auto; display: block; margin: 0 auto 20px;" class="fadeInAnimation">';
+            if (!empty($mechanicDetails['image'])) {
+                echo '<img src="' . $mechanicDetails['image'] . '" alt="Mechanic Image" style="width: 200px; height: auto; display: block; margin: 0 auto 20px;" class="fadeInAnimation">';
             } else {
                 echo '<p>No image available</p>';
             }
@@ -154,7 +154,7 @@ img {
             <table class="fadeInAnimation">
                 <tr>
                     <td>ID:</td>
-                    <td><?php echo $mechanicDetails['vehicleID']; ?></td>
+                    <td><?php echo $mechanicDetails['id']; ?></td>
                 </tr>
                 <tr>
                     <td>First Name:</td>

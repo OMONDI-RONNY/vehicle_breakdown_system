@@ -172,6 +172,22 @@ mysqli_close($conn);
             color: white;
             border: 1px solid #4CAF50;
         }
+        /* Additional styles for the "Request Processed" button */
+.processed-btn {
+    padding: 5px 10px;
+    background-color: #28a745; /* Green color for processed button */
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+}
+
+.processed-btn i {
+    margin-right: 5px;
+}
+
         /* ... */
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
@@ -223,90 +239,7 @@ mysqli_close($conn);
         </div>
       </li>
 
-      <!-- Messages Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-comments"></i>
-          <span class="badge badge-danger navbar-badge">3</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Brad Diesel
-                  <span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">Call me whenever you can...</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  John Pierce
-                  <span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">I got your message bro</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <!-- Message Start -->
-            <div class="media">
-              <img src="dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-              <div class="media-body">
-                <h3 class="dropdown-item-title">
-                  Nora Silvester
-                  <span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-                </h3>
-                <p class="text-sm">The subject goes here</p>
-                <p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-              </div>
-            </div>
-            <!-- Message End -->
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-        </div>
-      </li>
-      <!-- Notifications Dropdown Menu -->
-      <li class="nav-item dropdown">
-        <a class="nav-link" data-toggle="dropdown" href="#">
-          <i class="far fa-bell"></i>
-          <span class="badge badge-warning navbar-badge">15</span>
-        </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-          <span class="dropdown-item dropdown-header">15 Notifications</span>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-envelope mr-2"></i> 4 new messages
-            <span class="float-right text-muted text-sm">3 mins</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-users mr-2"></i> 8 friend requests
-            <span class="float-right text-muted text-sm">12 hours</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item">
-            <i class="fas fa-file mr-2"></i> 3 new reports
-            <span class="float-right text-muted text-sm">2 days</span>
-          </a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-        </div>
+     
       </li>
       <li class="nav-item">
         <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -590,35 +523,68 @@ mysqli_close($conn);
         $sql .= " LIMIT $start, $limit";
 
         $result = $conn->query($sql);
-
-        echo "<table>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Requested Service</th>
-                    <th>Actions</th>
-                </tr>";
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo "<tr>
-                        <td>" . $row['id'] . "</td>
-                        <td>" . $row['contact_name'] . "</td>
-                        <td>" . $row['contact_phone'] . "</td>
-                        <td>" . $row['issue_desc'] . "</td>
-                        <td class='action-buttons'>
-                            <a href='requestview.php?action=view&id=" . $row['id'] . "' class='view-btn'><i class='fas fa-eye'></i> View</a>
-                             <a href='requestedit.php?action=edit&id=" . $row['id'] . "' class='edit-btn'><i class='fas fa-edit'></i> Assign</a>
-                            <a href='requestdelete.php?action=delete&id=" . $row['id'] . "' class='delete-btn' onclick='return confirm(\"Are you sure?\");'><i class='fas fa-trash-alt'></i> Delete</a>
-                        </td>
-                      </tr>";
-            }
-        } else {
-            echo "<tr><td colspan='5'>No Requests found</td></tr>";
+        echo "<style>
+        .waiting-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #FFD700; /* Yellow */
+            color: #000000; /* Black or any contrasting color */
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: not-allowed;
+            border-radius: 4px;
+            border: none;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        echo "</table>";
+        .waiting-btn:hover {
+            background-color: #FFD700; /* Yellow */
+            color: #FFFFFF; /* White or any contrasting color */
+        }
+</style>";
+        echo "<table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Requested Service</th>
+            <th>Actions</th>
+        </tr>";
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr>
+                <td>" . $row['id'] . "</td>
+                <td>" . $row['contact_name'] . "</td>
+                <td>" . $row['contact_phone'] . "</td>
+                <td>" . $row['issue_desc'] . "</td>
+                <td class='action-buttons'>";
+
+        if (!empty($row['mechanic_assigned']) && $row['acceptance'] != 0) {
+            // Display Done button if both conditions are met
+            echo "<button class='processed-btn' disabled><i class='fas fa-check-circle'></i> Done</button>";
+        } elseif (!empty($row['mechanic_assigned'])) {
+            // Display Waiting button if 'mechanic_assigned' has data
+            echo "<button class='waiting-btn' disabled><i class='fas fa-hourglass'></i> Wait</button>";
+        } elseif ($row['acceptance'] == 0) {
+            // Display Assign button if 'acceptance' is 0
+            echo "<a href='requestedit.php?action=edit&id=" . $row['id'] . "' class='edit-btn'><i class='fas fa-edit'></i> Assign</a>";
+        }
+
+        echo "<a href='requestview.php?action=view&id=" . $row['id'] . "' class='view-btn'><i class='fas fa-eye'></i> View</a>
+                <a href='requestdelete.php?action=delete&id=" . $row['id'] . "' class='delete-btn' onclick='return confirm(\"Are you sure?\");'><i class='fas fa-trash-alt'></i> Delete</a>
+                </td>
+                </tr>";
+    }
+
+} else {
+    echo "<tr><td colspan='5'>No Requests found</td></tr>";
+}
+
+echo "</table>";
+
+
 
         // Count total number of records
         $sqlCount = "SELECT COUNT(*) AS total FROM request";

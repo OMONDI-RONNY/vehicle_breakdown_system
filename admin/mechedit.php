@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fname = $_POST['firstName'];
     $lname = $_POST['lastName'];
     $id = $_POST['mechanicId'];
+    $status=$_POST['status'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $model = $_POST['typeOfService'];
@@ -25,9 +26,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
-        $sql = "UPDATE mechanicreg SET firstname=?, lastname=?, phone=?, mech_email=?, typeofservice=? WHERE id=?";
+        $sql = "UPDATE mechanicreg SET firstname=?, lastname=?, phone=?, mech_email=?, typeofservice=?, status=? WHERE id=?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssi", $fname, $lname, $phone, $email, $model, $id);
+        $stmt->bind_param("ssssssi", $fname, $lname, $phone, $email, $model,$status, $id);
         $result = $stmt->execute();
 
         if ($result) {
@@ -95,7 +96,8 @@ label {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+select {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
@@ -197,6 +199,12 @@ p {
 
             <label for="typeOfService">Type of Service:</label>
             <input type="text" id="typeOfService" value="<?php echo $row['typeofservice']; ?>" name="typeOfService" required>
+
+            <label for="status">Status:</label>
+           <select id="status" name="status" required>
+           <option value="1">Active</option>
+           <option value="0">Inactive</option>
+           </select>
 
             <input type="submit" value="Update">
         </form>

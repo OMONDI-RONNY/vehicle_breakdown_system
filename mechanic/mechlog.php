@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['mech_id'] = $id;
 
     // Fetch user data from the database
-    $sql = "SELECT * FROM mechanicreg WHERE mech_id = '$id'";
+    $sql = "SELECT * FROM mechanicreg WHERE id = '$id'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
@@ -19,13 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Verify password
         if (password_verify($password, $stored_password)) {
             // Password is correct
-            header("Location: master/html/index.php");
-            // Redirect the user or perform necessary actions
-            exit();
+        
+            // Update longitude and latitude in the database
+            $latitude = $_POST['latitude'];
+            $longitude = $_POST['longitude'];
+            echo "Latitude: $latitude, Longitude: $longitude<br>";
+         
+            $update_sql = "UPDATE mechanicreg SET latitude = '$latitude', longitude = '$longitude' WHERE id = '$id'";
+            if ($conn->query($update_sql) === TRUE) {
+                // Redirect the user or perform necessary actions
+                header("Location: master/html/index.php");
+                exit();
+            } else {
+                $error = "Error updating location: " . $conn->error;
+            }
         } else {
             // Invalid password
             $error = "Invalid password!";
         }
+        
     } else {
         // Username not found
         $error = "User not found!";
@@ -63,8 +75,10 @@ $conn->close();
             padding: 40px; /* Increased padding */
             background-color: rgba(255, 255, 255, 0.7);
             border-radius: 5px;
+            animation: slideIn 2s ease-in-out;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
+            
         }
 
         .container:hover {
@@ -127,15 +141,22 @@ $conn->close();
             color: #007BFF;
             font-size: 14px;
         }
+        #location {
+            display: none; /* Hide the location paragraph */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Mechanic Login</h2>
+        
 
         <?php if(isset($error)) { ?>
             <p style="color: red;"><?php echo $error; ?></p>
         <?php } ?>
+              <!-- Display the detected location -->
+              
+    <p id="location">Fetching location...</p>
 
         <form action="mechlog.php" method="post" autocomplete="off">
             <label for="id">
@@ -147,6 +168,9 @@ $conn->close();
                 <i class="fas fa-lock"></i> Password:
             </label>
             <input type="password" id="password" name="password" required><br><br>
+            <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+
 
             <input type="submit" value="Login">
             <input type="reset" value="Clear">
@@ -160,5 +184,45 @@ $conn->close();
             Don't have an account? <a href="mechanicreg.php">Create one</a>
         </p>
     </div>
+    <script>document.addEventListener("DOMContentLoaded", function() {
+            getLocation(); // Call the function when the page loads
+        });
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition, showError);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function showPosition(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            // Display the latitude and longitude on the webpage
+            document.getElementById("location").innerHTML = "Latitude: " + latitude + "<br>Longitude: " + longitude;
+
+            // Set the values of latitude and longitude in the form fields
+            document.getElementById("latitude").value = latitude;
+            document.getElementById("longitude").value = longitude;
+        }
+
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("User denied the request for Geolocation.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred.");
+                    break;
+            }
+        }</script>
 </body>
 </html>

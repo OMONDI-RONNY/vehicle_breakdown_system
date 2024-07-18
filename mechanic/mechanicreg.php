@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id=$_POST['mechanicId'];
     $phone=$_POST['phone'];
     $email=$_POST['email'];
+     $status = $_POST['status'];
     $model=$_POST['typeOfService'];
     $password = $_POST['password'];
     $hash=password_hash($password, PASSWORD_DEFAULT);
@@ -26,12 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //echo $lname;
 
     // Insert data into the database
-    $sql = "INSERT INTO mechanicreg (firstname, lastname,mech_id,phone,mech_email,typeofservice,password) VALUES ('$fname', '$lname','$id','$phone','$email','$model','$hash')";
+    $sql = "INSERT INTO mechanicreg (firstname, lastname,id,phone,mech_email,typeofservice,password,status) VALUES ('$fname', '$lname','$id','$phone','$email','$model','$hash','$status')";
 
     if ($conn->query($sql) === TRUE) {
          header("Location: mechlog.php");
     } else {
-        $error=  $conn->error;
+        $error= "User already Registered!";
     }
 }
 
@@ -109,6 +110,7 @@ $conn->close();
         }
 
         input[type="text"],
+        input[type="email"],
         input[type="password"] {
             width: 90%;
             padding: 10px;
@@ -129,6 +131,28 @@ $conn->close();
         .create-account {
             text-align: center;
         }
+        .tick-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+
+        .tick-list li {
+            color: red;
+            display: flex;
+            align-items: center;
+        }
+
+        .tick-list li::before {
+            content: "✓";
+            margin-right: 5px;
+        }
+
+        #passwordRequirements {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -137,7 +161,7 @@ $conn->close();
           <?php if(isset($error)) { ?>
             <p style="color: red;"><?php echo $error; ?></p>
         <?php } ?>
-        <form autocomplete="off" action="mechanicreg.php" method="POST"  onsubmit="return validatePassword()">
+        <form id="myForm" onsubmit="return validateForm()" autocomplete="off" action="mechanicreg.php" method="POST"  onsubmit="return validatePassword()">
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" name="firstName" required>
 
@@ -145,13 +169,16 @@ $conn->close();
             <input type="text" id="lastName" name="lastName" required>
 
             <label for="mechanicId">Mechanic ID:</label>
-            <input type="text" id="mechanicId" name="mechanicId" required>
+            <input type="text" id="mechanicId" name="mechanicId" pattern="[0-9]{8,10}" title="Please enter a valid national ID number" placeholder="e.g 39068465" required>
 
               <label for="lastName">Phone:</label>
-            <input type="text" id="lastName" name="phone" required>
+            <input type="text" id="lastName" name="phone" pattern="[0-9]{10}" title="Please enter a 10-digit phone number" required placeholder="e.g 0796471436">
 
               <label for="lastName">Email:</label>
-            <input type="text" id="lastName" name="email" required>
+            <input type="email" id="lastName" name="email" placeholder="e.g omoron37@gmail.com" required>
+
+
+           
 
 
 
@@ -164,12 +191,21 @@ $conn->close();
                 }
                 ?>
             </select>
+             <!-- Add this code inside your form -->
+           <label for="status">Status:</label>
+           <select id="status" name="status" required>
+           <option value="1">Active</option>
+           <option value="0">Inactive</option>
+           </select>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+           <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required onkeyup="checkPasswordStrength(this.value)">
+        <div id="passwordRequirements">At least 8 characters, one uppercase letter, one lowercase letter, one digit, and one special character.</div>
+        <ul id="tickList" class="tick-list"></ul>
 
-            <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required onfocus="clearDescriptionAndTicks()">
+<br><br>
 
             <input type="submit" value="Submit">
             <input type="reset" value="Clear">
@@ -178,5 +214,91 @@ $conn->close();
             Have an account? <a href="mechlog.php">Login</a>
         </p>
     </div>
+    <script>
+    function checkPasswordStrength(password) {
+        var strength = 0;
+        var tickList = document.getElementById("tickList");
+        tickList.innerHTML = ""; // Clear previous tick list
+
+        // Check for at least 8 characters
+        if (password.length >= 8) {
+            strength++;
+            appendTick("At least 8 characters");
+        }
+
+        // Check for at least one uppercase letter
+        if (/[A-Z]/.test(password)) {
+            strength++;
+            appendTick("At least one uppercase letter");
+        }
+
+        // Check for at least one lowercase letter
+        if (/[a-z]/.test(password)) {
+            strength++;
+            appendTick("At least one lowercase letter");
+        }
+
+        // Check for at least one digit
+        if (/\d/.test(password)) {
+            strength++;
+            appendTick("At least one digit");
+        }
+
+        // Check for at least one special character
+        if (/[$@$!%*?&#]/.test(password)) {
+            strength++;
+            appendTick("At least one special character");
+        }
+
+        // Display a message if all requirements are met
+        if (strength === 5) {
+            document.getElementById("passwordRequirements").style.display = "none";
+            return true;
+        } else {
+            document.getElementById("passwordRequirements").style.display = "block";
+            return false;
+        }
+    }
+
+    function appendTick(description) {
+        var tickList = document.getElementById("tickList");
+        var listItem = document.createElement("li");
+        listItem.appendChild(document.createTextNode(description));
+        tickList.appendChild(listItem);
+    }
+
+    function clearDescriptionAndTicks() {
+        var tickList = document.getElementById("tickList");
+        var passwordRequirements = document.getElementById("passwordRequirements");
+
+        tickList.innerHTML = "";
+        passwordRequirements.style.display = "none";
+    }
+
+    function validateForm() {
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        // Check if password criteria are met
+        if (!checkPasswordStrength(password)) {
+            alert("Password does not meet the criteria");
+            return false;
+        }
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match");
+            return false;
+        }
+
+        // Add more validation logic as needed
+
+        return true; // Form submission will proceed if all validations pass
+    }
+
+    document.getElementById("password").addEventListener("input", function() {
+        checkPasswordStrength(this.value);
+    });
+</script>
 </body>
 </html>

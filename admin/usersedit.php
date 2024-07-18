@@ -14,16 +14,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fname = $_POST['firstName'];
     $lname = $_POST['lastName'];
     $id = $_POST['mechanicId'];
+    $vid = $_POST['vid'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $model = $_POST['typeOfService'];
-    $password = $_POST['password'];
-    $confirmPassword = $_POST['confirmPassword'];
-
-    if ($password !== $confirmPassword) {
-        $error = "Passwords do not match!";
-    } else {
-        $hash = password_hash($password, PASSWORD_DEFAULT);
+  
 
         $sql = "UPDATE vehicleowners SET firstname=?, lastname=?, phone=?, email=?, vehicleModel=? WHERE id=?";
         $stmt = $conn->prepare($sql);
@@ -37,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Error updating record: " . $conn->error;
         }
     }
-}
+
 
 $id = $_GET['id'];
 $sql_select = "SELECT * FROM vehicleowners WHERE id=?";
@@ -149,8 +144,10 @@ $conn->close();
             <p style="color: red;"><?php echo $error; ?></p>
         <?php } ?>
         <form autocomplete="off" action="usersedit.php" method="POST" onsubmit="return validatePassword()">
-             <label for="mechanicId">Owner ID:</label>
-            <input type="text" id="mechanicId" value="<?php echo $row['id']; ?>" name="mechanicId" required readonly>
+        <input type="hidden" id="mechanicId" value="<?php echo $row['id']; ?>" name="mechanicId" required readonly>
+            <!-- <label for="mechanicId">Owner ID:</label>-->
+
+           <!-- <input type="text" id="mechanicId" value="<?php echo $row['vehicleID']; ?>" name="vid" required >-->
 
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" value="<?php echo $row['firstname']; ?>" name="firstName" required>
@@ -163,7 +160,7 @@ $conn->close();
             <input type="text" id="phone" value="<?php echo $row['phone']; ?>" name="phone" required>
 
             <label for="email">Email:</label>
-            <input type="text" id="email" value="<?php echo $row['email']; ?>" name="email" required>
+            <input type="text" id="email" value="<?php echo $row['email']; ?>" name="email" required readonly>
 
             <label for="typeOfService">Vehicle Model:</label>
             <input type="text" id="typeOfService" value="<?php echo $row['vehicleModel']; ?>" name="typeOfService" required>

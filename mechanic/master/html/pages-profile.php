@@ -6,7 +6,7 @@ $userEmail = $_SESSION['mech_id'];
 include 'includes/connection.php';
 
 // SQL query to fetch user profile information
-$sql = "SELECT * FROM mechanicreg WHERE mech_id = '$userEmail'";
+$sql = "SELECT * FROM mechanicreg WHERE id = '$userEmail'";
 
 $result = mysqli_query($conn, $sql);
 
@@ -320,14 +320,14 @@ $conn->close();
                                     class="hide-menu">Find Location</span></a></li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
                                 href="#" aria-expanded="false"><i
-                                    class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Notification</span></a>
+                                    class="mdi mdi-bell me-2"></i><span class="hide-menu">Notification</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="feebacks.php" aria-expanded="false"><i class="mdi me-2 mdi-comment"></i><span
+                                href="feebacks.php" aria-expanded="false"><i class="mdi mdi-comment-check-outline me-2"></i><span
                                     class="hide-menu">Feed Back</span></a>
                         </li>
                         <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
-                                href="#" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                                href="freq.php" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
                                     class="hide-menu">FAQs</span></a>
                         </li>
                        
@@ -457,48 +457,35 @@ $conn->close();
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="serviceRequestModalLabel">Service Request Form</h5>
+                <h5 class="modal-title" id="serviceRequestModalLabel">Profile Update</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Include your form here -->
                <form action="process_profile_update.php" method="post" class="advanced-form">
-    <div class="form-group">
-        <label for="user_id" class="form-label">User ID:</label>
-        <input type="text" class="form-control" id="user_id" name="user_id" required>
-    </div>
+   
 
     <div class="form-group">
         <label for="first_name" class="form-label">First Name:</label>
-        <input type="text" class="form-control" id="first_name" name="first_name" required>
+        <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $firstname; ?>" required>
     </div>
 
     <div class="form-group">
         <label for="last_name" class="form-label">Last Name:</label>
-        <input type="text" class="form-control" id="last_name" name="last_name" required>
+        <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $lastname; ?>" required>
     </div>
 
-    <div class="form-group">
-        <label for="mech" class="form-label">Mechanic Status:</label>
-        <select name="mech" id="mech" class="form-control" required>
-            <option value="0">Not a Mechanic</option>
-            <option value="1">Mechanic</option>
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label for="mech_id" class="form-label">Mechanic ID:</label>
-        <input type="text" class="form-control" id="mech_id" name="mech_id">
-    </div>
+    
+   
 
     <div class="form-group">
         <label for="phone" class="form-label">Phone:</label>
-        <input type="text" class="form-control" id="phone" name="phone">
+        <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $phone; ?>">
     </div>
 
     <div class="form-group">
         <label for="mech_email" class="form-label">Mechanic Email:</label>
-        <input type="email" class="form-control" id="mech_email" name="mech_email">
+        <input type="email" class="form-control" id="mech_email" name="mech_email" value="<?php echo $email; ?>">
     </div>
 
     <!-- Other existing form fields -->

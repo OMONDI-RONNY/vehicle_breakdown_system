@@ -117,33 +117,47 @@
         <?php
         session_start();
             // Assuming you have a connection to the database
-            include '../includes/connection.php';
-            $sql = "SELECT * FROM mechanicreg";
-              $mechanicId =$_GET['id']; // Adjust this based on your URL structure
-              $_SESSION['id']=$mechanicId;
+         include '../includes/connection.php';
+
+$mechanicId = $_GET['id']; // Adjust this based on your URL structure
+$_SESSION['mech'] = $mechanicId;
+
+// Fetch mechanics with status = 1
+$sql = "SELECT * FROM mechanicreg WHERE status = 1";
 $result = $conn->query($sql);
 
-// Store fetched services in an array
+// Store fetched mechanics in an array
 $services = [];
+$services2 = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $services[] = $row['mech_id'];
+        $services[] = $row['id'];
+        $services2[] = $row['firstname'];
     }
 }
 
-          
+$sql = "SELECT * FROM request WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $mechanicId);
+$stmt->execute();
+$result = $stmt->get_result();
 
-            $sql = "SELECT * FROM request WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $mechanicId);
-            $stmt->execute();
-            $result = $stmt->get_result();
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
 
-            if ($result->num_rows > 0) {
-                $row = $result->fetch_assoc();
-
-
-            }
+    // Create sessions for each input value
+    $_SESSION['contact_name'] = $row['contact_name'];
+    $_SESSION['contact_email'] = $row['contact_email'];
+    $_SESSION['user_id'] = $row['user_id'];
+    $_SESSION['contact_phone'] = $row['contact_phone'];
+    $_SESSION['contact_address'] = $row['contact_address'];
+    $_SESSION['county'] = $row['county'];
+    $_SESSION['sub_county'] = $row['sub_county'];
+    $_SESSION['vehicle_model'] = $row['vehicle_model'];
+    $_SESSION['issue_desc'] = $row['issue_desc'];
+    $_SESSION['req_date'] = $row['req_date'];
+    $_SESSION['req_time'] = $row['req_time'];
+}
           
         ?>
 
@@ -192,17 +206,22 @@ if ($result->num_rows > 0) {
                 <input readonly type="time" id="firstname" name="firstname" value="<?php echo $row['req_time']; ?>" required>
 
                 
+                        
 
 
-                   <label for="typeOfService">Assign Mechanic:</label>
-            <select id="typeOfService" name="typeOfService" required>
-                <?php
-                // Loop through the fetched services and create options in the select dropdown
-                foreach ($services as $service) {
-                    echo "<option value='$service'>$service</option>";
-                }
-                ?>
-            </select>
+                 <label for="typeOfService">Assign Mechanic:</label>
+<select id="typeOfService" name="typeOfService" required>
+    <?php
+    // Loop through the fetched mechanics and create options in the select dropdown
+    foreach ($services as $service) {
+        foreach($services2 as $serve){
+        echo "<option value='$service'>$serve</option>";
+    }
+}
+    ?>
+</select>
+
+<input hidden readonly type="time" id="firstname" name="firstname" value="<?php echo $row['req_time']; ?>" required>
                
 
 

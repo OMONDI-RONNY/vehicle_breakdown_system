@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Bell</title>
+    <!-- Include FontAwesome CSS (you can find this on the FontAwesome website) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        #notification-bell {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+
+        #notification-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 6px; /* Adjust padding */
+            font-size: 10px; /* Adjust font size */
+        }
+
+        .bell-icon {
+            font-size: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Notification Bell -->
+<div id="notification-bell">
+    <span id="notification-count">0</span>
+    <i class="bell-icon fas fa-bell"></i>
+</div>
+
+<!-- Include your JavaScript at the end to ensure the DOM is loaded -->
+<script>
+    // Simulated data fetching function
+    function fetchDataFromServer() {
+        // Replace this with actual data fetching logic
+        const totalCount = 5; // Replace with your actual count from the server
+        updateNotificationCount(totalCount);
+    }
+
+    // Update the notification count on the bell icon
+    function updateNotificationCount(count) {
+        document.getElementById('notification-count').textContent = count;
+    }
+
+    // Trigger the data fetching and update on page load
+    window.addEventListener('load', function() {
+        fetchDataFromServer();
+
+        // Add click event listener to the bell icon for demonstration
+        document.querySelector('.bell-icon').addEventListener('click', function() {
+            // Simulated action on bell icon click (e.g., showing notifications)
+            alert('Showing notifications!');
+        });
+    });
+</script>
+
+</body>
+</html>
